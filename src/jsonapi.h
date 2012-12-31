@@ -53,7 +53,7 @@ public:
     static JSONValue *GetValue(JsonParse *parser) {return GetRootObject(parser);}
 private:
     JSONAPI(JSONAPI const&) {};
-    JSONAPI& operator=(JSONAPI const&) {};
+    JSONAPI& operator=(JSONAPI const&); 
     JSONValue *ToJsonValue(JsonNode *);
     JSONAPI() {};
 };
