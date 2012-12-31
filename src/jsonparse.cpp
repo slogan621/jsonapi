@@ -31,39 +31,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "jsonobj.h"
 #include <memory.h>
 
-#if 0
-int yyerror(JsonParse *parser, void *yyscanner, const char *s);
-#include "json.h" // XXX for YYSTYPE
-int yylex(YYSTYPE *yylval_param, void *yyscanner);
-#include "json.cpp"
-#include "lex.cpp"
-#endif
-
-#if 0
-/**
- * Display error message found during a parse.
- *
- * @param[in] scanner lexical analyzer
- * @param[in] msg the error message to display
- * 
- * @note sometimes the return from yyget_lineno is nonsense. 
- */
-
-void
-JsonParse::HandleError(void *scanner, const char *msg)
-{
-#ifdef JSON_PARSE_VERBOSE
-    if (scanner && msg) {
-        fprintf(stderr, "line %d: %s\n", yyget_lineno(scanner) + 1, msg); 
-    } else if (msg) {
-        fprintf(stderr, "%s\n", msg); 
-    }
-#endif
-}
-
-#endif
-
-
 /**
  * Constructor.
  */
@@ -124,48 +91,7 @@ JsonParse::GetRoot()
     return ret;
 }
 
-#if 0
-/**
- * Parse the JSON string, constructing an object tree which can be used
- * by the API.
- *
- * @return true on success, false on failure.
- */
 
-bool
-JsonParse::Parse()
-{
-    JsonNode *p;
-    YY_BUFFER_STATE state;
-    yyscan_t scanner;
-
-    // clear out any previous context, e.g., a subsequent parse.
-
-    while ((p = m_ctx.Pop()) != (JsonNode *) NULL) {
-        delete p;
-    }
-
-    m_root = NULL;
-
-    PushRoot();
-
-    if (yylex_init(&scanner)) {
-        fprintf(stderr, "%s: failed to init scanner\n", __FUNCTION__);
-        return false;
-    }
-
-    state = yy_scan_string(m_input.c_str(), scanner);
-
-    int ret = yyparse(this, scanner);
-    yy_delete_buffer(state, scanner);
-    yylex_destroy(scanner);
-
-    // XXX check for errors from parse.
-
-    return ret == 0 ? true : false;
-}
-
-#endif
 /**
  * Set the input path for a parse.
  *
