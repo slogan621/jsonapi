@@ -237,7 +237,6 @@ JsonParse::ToJson(JsonValue *root)
 std::string
 JsonParse::ToJson()
 {
-    JsonNode *current;
     std::string str;
 
     if (m_ctx.Current()) {
@@ -292,7 +291,6 @@ JsonParse::AddTuple(void *name, void *val)
         delete static_cast<JsonValue *>(name);
         delete static_cast<JsonValue *>(val);
     } 
-out:
     return ret;
 }
 
@@ -342,6 +340,5 @@ JsonParse::AddValue(JsonValue *obj)
         current->AddChild(obj);
         ret = true;
     } 
-out:
     return ret;
 }

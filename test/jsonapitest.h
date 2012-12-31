@@ -750,7 +750,6 @@ public:
         CPPUNIT_ASSERT(array2);
         type = array2->GetType();
         CPPUNIT_ASSERT(type == JsonType_Array);
-        value;
         value = array2->Get(0);
         CPPUNIT_ASSERT(static_cast<JSONNumber *>(value)->Get() == 68);  
         value = array2->Get(1);

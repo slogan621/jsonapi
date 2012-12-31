@@ -406,7 +406,7 @@ JSONValue::Set(int offset, JSONValue *val)
 {
     bool ret = true;
 
-    if (offset < 0 || offset >= m_elements.size()) {
+    if (offset < 0 || offset >= (int) m_elements.size()) {
         ret = false;
         goto out;
     }
@@ -433,13 +433,13 @@ JSONValue::Insert(int offset, JSONValue *val)
     std::list<JSONValue *>::iterator iter;
     int i;
 
-    if (offset < 0 || offset >= m_elements.size()) {
+    if (offset < 0 || offset >= (int) m_elements.size()) {
         ret = false;
         goto out;
     }
     if (offset == 0) {
         Prepend(val);
-    } else if (offset == m_elements.size() - 1) {
+    } else if (offset == (int) m_elements.size() - 1) {
         Append(val);
     } else {
         for (i = 0,iter = m_elements.begin(); 
@@ -469,18 +469,17 @@ JSONValue::Delete(int offset)
 {
     bool ret = true;
 
-    if (offset < 0 || offset >= m_elements.size()) {
+    if (offset < 0 || offset >= (int) m_elements.size()) {
         ret = false;
         goto out;
     }
 
     if (offset == 0) {
         m_elements.pop_front();
-    } else if (offset == m_elements.size() - 1) {
+    } else if (offset == (int) m_elements.size() - 1) {
         m_elements.pop_back();
     } else {
         std::list<JSONValue *>::iterator iter;
-        JSONValue *p = NULL;
         int i;
 
         for (i = 0,iter = m_elements.begin(); 

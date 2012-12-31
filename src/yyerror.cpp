@@ -12,4 +12,5 @@ int
 yyerror(JsonParse *locp, void *yyscanner, const char *s)
 {
     locp->HandleError(yyscanner, s);
+    return 0;
 }
