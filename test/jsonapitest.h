@@ -446,6 +446,17 @@ public:
         CPPUNIT_ASSERT(value == str);  
         delete obj;
 
+        str = "\"Hello\nWorld\"";
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
+        CPPUNIT_ASSERT(value == str);  
+        delete obj;
+
         str = "\"\\\"\"";
         parser->SetInput(str);
         CPPUNIT_ASSERT(parser->Parse() == true);
@@ -1051,6 +1062,12 @@ public:
         str = "";
         str = obj->ToJSON(str);
         CPPUNIT_ASSERT(str == "\"\"");
+        delete obj;
+
+        obj = new JSONString("Hello\nWorld");
+        str = "";
+        str = obj->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"Hello\nWorld\"");
         delete obj;
 
         obj = new JSONString("\"");
