@@ -1,5 +1,5 @@
-#if !defined(__PARSETEST_H__)
-#define __PARSETEST_H__
+#if !defined(__JSONAPITEST_H__)
+#define __JSONAPITEST_H__
 
 /*
     Copyright © 2012 Syd Logan. All Rights Reserved.
