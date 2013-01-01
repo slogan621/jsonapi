@@ -28,6 +28,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdio.h>
 #include "jsonobj.h"
+#include <stdlib.h>
+#include <memory.h>
 
 /**
  * Constructor
@@ -210,7 +212,8 @@ JsonValue::SetValue(double val)
 void 
 JsonValue::SetValue(char *val)
 {
-    m_strVal = val;
+    std::string str(val);
+    m_strVal = ProcessEscapes(str);
     SetType(JsonType_String);
 }
 
@@ -224,8 +227,62 @@ JsonValue::SetValue(char *val)
 void 
 JsonValue::SetValue(std::string &val)
 {
-    m_strVal = val;
+    m_strVal = ProcessEscapes(val);
     SetType(JsonType_String);
+}
+
+
+std::string
+JsonValue::ProcessEscapes(std::string &in)
+{
+    return in;
+
+#if 0
+    int len = in.size();
+    std::string tmp("");
+    if (len == 0) {
+        return tmp;
+    }
+    char *buf = (char *) malloc(len * 2 + 1);
+    char *buf2 = (char *) malloc(len + 1);
+
+    memcpy(buf2, in.c_str(), len);
+    char *p = buf;
+    char *q = buf2;
+    int i = 0;
+    while(i < len) {
+        if (*q == '\\' && i < len - 1 && *(q+1) != '\\') {
+            *p++ = '\\';
+            *p++ = '\\';
+            *p++ = '\\';
+        } else if (*q == '\b') {
+            *p++ = '\\';
+            *p++ = '\\';
+            *p++ = 'b';
+        } else if (*q == '\f') {
+            *p++ = '\\';
+            *p++ = '\\';
+            *p++ = 'f';
+        } else if (*q == '\n') {
+            *p++ = '\\';
+            *p++ = '\\';
+            *p++ = 'n';
+        } else if (*q == '\t') {
+            *p++ = '\\';
+            *p++ = '\\';
+            *p++ = 't';
+        } else {
+            *p++ = *q;
+        }
+        q++;
+        i++;
+    }
+    *p = '\0';
+    tmp = buf;
+    free(buf);
+    free(buf2);
+    return tmp;
+#endif
 }
 
 

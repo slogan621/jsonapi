@@ -446,7 +446,9 @@ public:
         CPPUNIT_ASSERT(value == str);  
         delete obj;
 
-        str = "\"Hello\nWorld\"";
+        str = "\"Hello\\nWorld\"";
+        printf("len is %d\n", strlen(str.c_str()));
+        printf("value '%s'\n", str.c_str());
         parser->SetInput(str);
         CPPUNIT_ASSERT(parser->Parse() == true);
         obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
@@ -454,7 +456,24 @@ public:
         type = obj->GetType();
         CPPUNIT_ASSERT(type == JsonType_String);
         value = obj->Get();
-        CPPUNIT_ASSERT(value == str);  
+        printf("len is %d\n", strlen(value.c_str()));
+        printf("value '%s'\n", value.c_str());
+        CPPUNIT_ASSERT(value == "\"Hello\\nWorld\"");  
+        delete obj;
+
+        str = "\"Hello\nWorld\"";
+        printf("len is %d\n", strlen(str.c_str()));
+        printf("value '%s'\n", str.c_str());
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
+        printf("len is %d\n", strlen(value.c_str()));
+        printf("value '%s'\n", value.c_str());
+        CPPUNIT_ASSERT(value == "\"Hello\\nWorld\"");  
         delete obj;
 
         str = "\"\\\"\"";
@@ -465,20 +484,8 @@ public:
         type = obj->GetType();
         CPPUNIT_ASSERT(type == JsonType_String);
         value = obj->Get();
-        CPPUNIT_ASSERT(value == str);  
+        CPPUNIT_ASSERT(value == "\"\\\"\"");  
         delete obj;
-
-        str = "\"\\\"\\\"\\\"\\\"\"";
-        parser->SetInput(str);
-        CPPUNIT_ASSERT(parser->Parse() == true);
-        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
-        CPPUNIT_ASSERT(obj);
-        type = obj->GetType();
-        CPPUNIT_ASSERT(type == JsonType_String);
-        value = obj->Get();
-        CPPUNIT_ASSERT(value == str);  
-        delete obj;
-        delete parser;
     }
 
     void testOneElementArray()
@@ -1064,10 +1071,16 @@ public:
         CPPUNIT_ASSERT(str == "\"\"");
         delete obj;
 
+        obj = new JSONString("Hello\\nWorld");
+        str = "";
+        str = obj->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"Hello\\nWorld\"");
+        delete obj;
+
         obj = new JSONString("Hello\nWorld");
         str = "";
         str = obj->ToJSON(str);
-        CPPUNIT_ASSERT(str == "\"Hello\nWorld\"");
+        CPPUNIT_ASSERT(str == "\"Hello\\nWorld\"");
         delete obj;
 
         obj = new JSONString("\"");

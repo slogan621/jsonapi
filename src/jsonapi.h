@@ -149,14 +149,15 @@ private:
 class JSONString : public JSONValue
 {
 public:
-    JSONString();
+    JSONString() {m_type = JsonType_String;}
     JSONString(std::string &str);
     JSONString(const char *str);
     void Set(std::string &str) {m_value = str;}
     void Set(const char *str) {m_value = str;}
-    std::string Get() {return m_value;}
+    std::string Get() {return ProcessEscapes(m_value);}
     std::string ToJSON(std::string &str);
 private:
+    std::string ProcessEscapes(std::string &s);
     std::string m_value;
 };
 

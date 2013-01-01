@@ -29,6 +29,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "jsonapi.h"
 #include "jsonobj.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
 
 /**
  * Get the JSONAPI singleton.
@@ -143,20 +145,10 @@ JSONArray::ToJSON(std::string &str)
  * Constructor. Set the appropriate type.
  */
 
-JSONString::JSONString() 
-{
-    m_type = JsonType_String;
-}
-
-
-/**
- * Constructor. Set the appropriate type.
- */
-
 JSONString::JSONString(std::string &str) 
 {
     m_type = JsonType_String;
-    m_value = str;
+    m_value = str; 
 }
 
 
@@ -167,9 +159,68 @@ JSONString::JSONString(std::string &str)
 JSONString::JSONString(const char *str) 
 {
     m_type = JsonType_String;
-    m_value = str;
+    m_value = str; 
 }
 
+
+/**
+ * Return the value of the string object with escapes processed.
+ *
+ * For example, "Hello\nWorld" --> "Hello\\nWorld", and
+ * "Hello\\nWorld" --> "Hello\nWorld"
+ *
+ * @note No support for unicode (\u) in this version.
+ *
+ * @return the JSON string with escapes processed.
+ */
+
+std::string
+JSONString::ProcessEscapes(std::string &in)
+{       
+    int len = in.size();
+    std::string tmp("");
+
+    if (len == 0) {
+        return tmp;
+    }
+
+    char *buf = (char *) malloc(len * 2 + 1); 
+    char *buf2 = (char *) malloc(len + 1);
+    memset(buf2, '\0', len + 1); 
+    strncpy(buf2, in.c_str(), len); 
+    char *p = buf;
+    char *q = buf2;
+    int i = 0;
+    while(i < len) {
+        if (*q == '\\') {
+            *p++ = '\\';
+        } else if (*q == '\f') {
+            *p++ = '\\';
+            *p++ = 'f';
+        } else if (*q == '\n') {
+            *p++ = '\\';
+            *p++ = 'n';
+        } else if (*q == '\r') {
+            *p++ = '\\';
+            *p++ = 'r';
+        } else if (*q == '\t') {
+            *p++ = '\\';
+            *p++ = 't';
+        } else if (*q == '\b') {
+            *p++ = '\\';
+            *p++ = 'b';
+        } else {
+            *p++ = *q;
+        }
+        q++;
+        i++;
+    }
+    *p = '\0';
+    tmp = buf;
+    free(buf);
+    free(buf2);
+    return tmp;
+}
 
 /**
  * Convert a JSON string object to it's string version. Concatenate the

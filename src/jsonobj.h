@@ -110,6 +110,7 @@ public:
     bool GetValue(std::string &val);
     std::string ToJson(std::string &str);
 private:
+    std::string ProcessEscapes(std::string &str);
     std::string DumpChildren(std::string &str);
     bool m_boolVal;
     double m_dblVal;
