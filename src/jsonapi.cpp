@@ -166,8 +166,7 @@ JSONString::JSONString(const char *str)
 /**
  * Return the value of the string object with escapes processed.
  *
- * For example, "Hello\nWorld" --> "Hello\\nWorld", and
- * "Hello\\nWorld" --> "Hello\nWorld"
+ * For example, "Hello\nWorld" --> "Hello\\nWorld"
  *
  * @note No support for unicode (\u) in this version.
  *

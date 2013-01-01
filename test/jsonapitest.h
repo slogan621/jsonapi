@@ -447,8 +447,6 @@ public:
         delete obj;
 
         str = "\"Hello\\nWorld\"";
-        printf("len is %d\n", strlen(str.c_str()));
-        printf("value '%s'\n", str.c_str());
         parser->SetInput(str);
         CPPUNIT_ASSERT(parser->Parse() == true);
         obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
@@ -456,14 +454,10 @@ public:
         type = obj->GetType();
         CPPUNIT_ASSERT(type == JsonType_String);
         value = obj->Get();
-        printf("len is %d\n", strlen(value.c_str()));
-        printf("value '%s'\n", value.c_str());
         CPPUNIT_ASSERT(value == "\"Hello\\nWorld\"");  
         delete obj;
 
-        str = "\"Hello\nWorld\"";
-        printf("len is %d\n", strlen(str.c_str()));
-        printf("value '%s'\n", str.c_str());
+        str = "\"\n\"";
         parser->SetInput(str);
         CPPUNIT_ASSERT(parser->Parse() == true);
         obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
@@ -471,8 +465,28 @@ public:
         type = obj->GetType();
         CPPUNIT_ASSERT(type == JsonType_String);
         value = obj->Get();
-        printf("len is %d\n", strlen(value.c_str()));
-        printf("value '%s'\n", value.c_str());
+        CPPUNIT_ASSERT(value == "\"\\n\"");  
+        delete obj;
+
+        str = "\"\r\n\b\"";
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
+        CPPUNIT_ASSERT(value == "\"\\r\\n\\b\"");  
+        delete obj;
+
+        str = "\"Hello\nWorld\"";
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
         CPPUNIT_ASSERT(value == "\"Hello\\nWorld\"");  
         delete obj;
 
