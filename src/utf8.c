@@ -46,28 +46,28 @@ POSSIBILITY OF SUCH DAMAGE.
 char *
 FromStrToUnicode(char *p, int *lenout)
 {
-    char *q = p;
+    char *q;
     char *ret = NULL;
     int len;
     unsigned int tmp = 0;       
 
     *lenout = 0;
 
-    if (!q) {
+    if (!p) {
         goto out;
     }
 
-    if ((len = strlen(q)) == 0 || len > 4) {
+    if ((len = strlen(p)) == 0 || len > 4) {
         goto out;
     }
 
     for (int i = 0; i < len; i++) {
-        if (*(q+i) >= '0' && *(q+i) <= '9') {
-            tmp |= *(q+i) - '0';
-        } else if (*(q+i) >= 'a' && *(q+i) <= 'f') {
-            tmp |= (*(q+i) - 'a') + 0x0a;
-        } else if (*(q+i) >= 'A' && *(q+i) <= 'F') {
-            tmp |= (*(q+i) - 'A') + 0x0a;
+        if (*(p+i) >= '0' && *(p+i) <= '9') {
+            tmp |= *(p+i) - '0';
+        } else if (*(p+i) >= 'a' && *(p+i) <= 'f') {
+            tmp |= (*(p+i) - 'a') + 0x0a;
+        } else if (*(p+i) >= 'A' && *(p+i) <= 'F') {
+            tmp |= (*(p+i) - 'A') + 0x0a;
         } else {
             printf("%s: unrecognized utf-8 string\n", __FUNCTION__);
             goto out;
@@ -131,9 +131,7 @@ out:
 char *
 FromUnicodeToStr(char *u)
 {
-    char *q = u;
     char *ret = NULL;
-    char *p;
     unsigned char c; 
     int len;
 
@@ -149,24 +147,24 @@ FromUnicodeToStr(char *u)
     ret[3] = 0;
     ret[6] = '\0';
 
-    if ((*q & 0x80) == 0x00) {
-        c = *q & 0x7f;
+    if ((*u & 0x80) == 0x00) {
+        c = *u & 0x7f;
         ret[4] = (c & 0xF0) >> 4;
         ret[5] = c & 0x0F;
-    } else if ((*q & 0xe0) == 0xc0) {
-        c = (*q & 0x1C) >> 2;
-        c |= (*q & 0x03) << 6;
-        q++;
-        c |= (*q & 0x3F);
+    } else if ((*u & 0xe0) == 0xc0) {
+        c = (*u & 0x1C) >> 2;
+        c |= (*u & 0x03) << 6;
+        u++;
+        c |= (*u & 0x3F);
         ret[4] = (c & 0xF0) >> 4;
         ret[5] = c & 0x0F;
-    } else if ((*q & 0xf0) == 0xe0) {
-        ret[2] = *q & 0x0F;
-        q++;
-        ret[3] = (*q & 0x3C) >> 2;
-        c = (*q & 0x3) << 6;
-        q++;
-        c |= (*q & 0x3F);
+    } else if ((*u & 0xf0) == 0xe0) {
+        ret[2] = *u & 0x0F;
+        u++;
+        ret[3] = (*u & 0x3C) >> 2;
+        c = (*u & 0x3) << 6;
+        u++;
+        c |= (*u & 0x3F);
         ret[4] = (c & 0xf0) >> 4;
         ret[5] = c & 0x0f;
     } else {
@@ -177,8 +175,6 @@ FromUnicodeToStr(char *u)
     }
 
     // map to ASCII 
-
-    q = (char *) &ret[2];
 
     int i = 2;
     while (i < len - 1) {
@@ -208,7 +204,8 @@ main(int argc, char *argv[])
 {
     char u[4];
     int len;
-    char *p, *q;
+    char *p; 
+    char *q;
 
     if (argc != 2) {
         usage(argv[0]);
