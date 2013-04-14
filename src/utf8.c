@@ -92,6 +92,10 @@ FromStrToUnicode(char *p, int *lenout)
     *lenout = len;
 
     ret = q = malloc(len);
+    if (ret == (char *) NULL) {
+        goto out;
+    }
+
     if (len == 1) {
         *q = tmp & 0x7f;
     } else if (len == 2) {
@@ -204,15 +208,25 @@ main(int argc, char *argv[])
 {
     char u[4];
     int len;
-    char *p;
+    char *p, *q;
 
     if (argc != 2) {
         usage(argv[0]);
         exit(1);
     }
     p = FromStrToUnicode(argv[1], &len);
-    p = FromUnicodeToStr(p);
-    printf("p is %s\n", p);
+    if (p != (char *) NULL) {
+        q = FromUnicodeToStr(p);
+        if (q != (char *) NULL) {
+            printf("q is %s\n", q);
+            free(q);
+        } else {
+            printf("%s: unable to malloc unicode str\n", __FUNCTION__);
+        }
+        free(p);
+    } else {
+        printf("%s: unable to malloc unicode bytestream\n", __FUNCTION__);
+    }
 }
 
 void
