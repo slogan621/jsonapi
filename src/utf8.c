@@ -133,30 +133,30 @@ FromUnicodeToStr(char *u)
     unsigned char c; 
     int len;
 
+    len = 7;
+    ret = malloc(len);
+    if (ret == (char *) NULL) {
+        goto out;
+    }
+
+    ret[0] = '\\';
+    ret[1] = 'u';
+    ret[2] = 0;
+    ret[3] = 0;
+    ret[6] = '\0';
+
     if ((*q & 0x80) == 0x00) {
-        len = 7;
-        ret = malloc(len);
-        ret[2] = 0;
-        ret[3] = 0;
         c = *q & 0x7f;
         ret[4] = (c & 0xF0) >> 4;
         ret[5] = c & 0x0F;
-        ret[6] = '\0';
     } else if ((*q & 0xe0) == 0xc0) {
-        len = 7;
-        ret = malloc(len);
-        ret[2] = 0;
-        ret[3] = 0;
         c = (*q & 0x1C) >> 2;
         c |= (*q & 0x03) << 6;
         q++;
         c |= (*q & 0x3F);
         ret[4] = (c & 0xF0) >> 4;
         ret[5] = c & 0x0F;
-        ret[6] = '\0';
     } else if ((*q & 0xf0) == 0xe0) {
-        len = 7;
-        ret = malloc(len);
         ret[2] = *q & 0x0F;
         q++;
         ret[3] = (*q & 0x3C) >> 2;
@@ -165,16 +165,14 @@ FromUnicodeToStr(char *u)
         c |= (*q & 0x3F);
         ret[4] = (c & 0xf0) >> 4;
         ret[5] = c & 0x0f;
-        ret[6] = '\0';
     } else {
         // unsupported, len > 3 
+        free(ret);
+        ret = NULL;
         goto out;
     }
 
-    // create a unicode string from result
-
-    ret[0] = '\\';
-    ret[1] = 'u';
+    // map to ASCII 
 
     q = (char *) &ret[2];
 
