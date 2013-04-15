@@ -221,6 +221,142 @@ JSONString::ProcessEscapes(std::string &in)
     return tmp;
 }
 
+
+extern "C" {
+char *FromUTF8ToStr(char *u, int *len);
+char *FromStrToUTF8(char *p, int *lenout);
+}
+
+/**
+ * Given a UTF-8 byte buffer, store as std::string. Any multi-byte 
+ * UTF-8 sequences are converted to \uxxxx format. If such UTF-8
+ * sequences are > 3 bytes in length, an error is returned.
+ *
+ * @param[in] str byte stream to be converted to a UTF-8 string.
+ *            We assume the string is NULL terminated (NULL is 
+ *            valid UTF-8, after all).
+ * 
+ * @return true on success, false on failure (unsupported UTF-8 len)
+ *         or some other failure.
+ */
+
+bool 
+JSONString::SetAsUTF8(const char *str)
+{
+    char *buf = NULL;
+    char *p = const_cast<char *>(str);
+    char *q;
+    bool ret = false;
+    int curLen;
+    int len;
+
+    if (!p) {
+        goto out;
+    }
+
+    curLen = 0;
+    buf = NULL;
+    q = buf; 
+
+    while (*p) {
+        char *u;
+        u = FromUTF8ToStr(p, &len);
+        if (u != (char *) NULL) {
+            char *t;
+            len--;
+            // allocate a new buffer
+            t = (char *) malloc(curLen + len);
+            // copy old buffer over
+            if (buf) {
+                memcpy(t, buf, curLen);
+            }
+            // copy the UTF-8 byte stream
+            memcpy(t + curLen, u, len);
+            // new buffer len += size of byte stream
+            curLen += len;
+            // point q at next insertion point
+            q = t + curLen;
+            // free the old buffer, point at new one
+            if (buf) {
+                free(buf);
+            }
+            buf = t;
+            p+=len;
+        }
+        else {
+            goto out;
+        }
+    }
+    if (q) {
+        *q = '\0';
+        ret = true;
+        Set(buf);
+        free(buf);
+    }
+out:
+    return ret;
+}
+
+
+/**
+ * Get string as a UTF-8 byte stream. Any portions of the string
+ * that are in the form of \uxxxx will be converted to UTF-8 bytes
+ * in the returned result.
+ * 
+ * @return UTF-8 byte stream, NULL terminated. NULL on failure.
+ * 
+ */
+
+char *
+JSONString::GetAsUTF8()
+{
+    char *ret = NULL;
+    char *p;
+    char *q;
+    char *u;
+    int len;
+    std::string value;
+
+    /* any \uabcd will be at most 3 bytes in size, so we can allocate
+       the entire buffer now and know we have enough space. */
+
+    value = Get();
+    p = const_cast<char *>(value.c_str());
+    if (!p) {
+        goto out;
+    }
+
+    q = ret = (char *) malloc(Get().length());
+    if (!ret) {
+        goto out;
+    }
+
+    while (*p) {
+        if (*p == '\\' && *(p+1) == 'u') {
+            p += 2;
+            u = FromStrToUTF8(p, &len);
+            if (!u) {
+                free(ret);
+                ret = NULL;
+                goto out;
+            } else {
+                // copy to the buffer
+                memcpy(q, u, len);
+                q += len;
+                // skip the 4 bytes of the UTF-8 portion
+                p += 4;
+            }            
+        } else {
+            // nothing special, just copy
+            *q++ = *p++;
+        }
+    }
+    *q = '\0';
+out: 
+    return ret;
+}
+
+
 /**
  * Convert a JSON string object to it's string version. Concatenate the
  * result to the passed in string reference.

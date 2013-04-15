@@ -155,6 +155,8 @@ public:
     void Set(std::string &str) {m_value = str;}
     void Set(const char *str) {m_value = str;}
     std::string Get() {return ProcessEscapes(m_value);}
+    bool SetAsUTF8(const char *str);
+    char *GetAsUTF8();
     std::string ToJSON(std::string &str);
 private:
     std::string ProcessEscapes(std::string &s);

@@ -31,20 +31,19 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 
 /**
- * Convert a string into a UTF-8 byte sequence.
+ * Convert a UTF-8 \uxxxx string to a UTF-8 byte stream.
  *
- * @param[in] p string to convert
- * @param[out] lenout length of created string
+ * @param[in] p 4 byte string to convert
+ * @param[out] lenout length of the created byte sequence
  *
  * @return UTF-8 byte string or NULL if failure.
  * 
- * @note routine expects "\u" to be removed by called.
+ * @note routine expects "\u" to be removed by caller.
  * @note caller must free memory returned by this function.
- * @note we accept strings <= 4 in length.
  */
 
 char *
-FromStrToUnicode(char *p, int *lenout)
+FromStrToUTF8(char *p, int *lenout)
 {
     char *q;
     char *ret = NULL;
@@ -57,11 +56,16 @@ FromStrToUnicode(char *p, int *lenout)
         goto out;
     }
 
-    if ((len = strlen(p)) == 0 || len > 4) {
+    // make sure we have a long enough string
+
+    if ((len = strlen(p)) < 4) {
         goto out;
     }
 
-    for (int i = 0; i < len; i++) {
+    len = 4;
+
+    int i;
+    for (i = 0; i < len; i++) {
         if (*(p+i) >= '0' && *(p+i) <= '9') {
             tmp |= *(p+i) - '0';
         } else if (*(p+i) >= 'a' && *(p+i) <= 'f') {
@@ -118,25 +122,26 @@ out:
     return ret;
 }
 
+
 /**
  *
- * Convert 3 byte (or less) UTF-8 byte stream to a hex string in format
+ * Convert a 3 byte (or less) UTF-8 byte stream to a hex string in format
  * "\uabcd".
  *
- * @param[in] u byte stream, not null terminated
+ * @param[in] u utf-8 byte stream. Stream does not need to be NULL terminated.
+ * @param[out] len size of resulting buffer. 
  *
- * @return ascii hex string representing the unicode byte stream
+ * @return Ascii hex string representing the unicode byte stream
  */
 
 char *
-FromUnicodeToStr(char *u)
+FromUTF8ToStr(char *u, int *len)
 {
     char *ret = NULL;
     unsigned char c; 
-    int len;
 
-    len = 7;
-    ret = malloc(len);
+    *len = 7;
+    ret = malloc(*len);
     if (ret == (char *) NULL) {
         goto out;
     }
@@ -177,7 +182,7 @@ FromUnicodeToStr(char *u)
     // map to ASCII 
 
     int i = 2;
-    while (i < len - 1) {
+    while (i < *len - 1) {
         if (ret[i] >= 0 && ret[i] <= 9) {
             ret[i] += '0';
         } else if (ret[i] >= 0x0a && ret[i] <= 0x0f) {
@@ -192,7 +197,7 @@ out:
 #if defined(TEST)
 
 /* 
-   Test consists of passing the 4 hex digits of a unicode string as
+   Test consists of passing the 4 hex digits of a UTF-8 string as
    argv[1] and verifying that the output displayed to stdout is the
    same. XXX do something better like with cunit.
 */
@@ -211,9 +216,9 @@ main(int argc, char *argv[])
         usage(argv[0]);
         exit(1);
     }
-    p = FromStrToUnicode(argv[1], &len);
+    p = FromStrToUTF8(argv[1], &len);
     if (p != (char *) NULL) {
-        q = FromUnicodeToStr(p);
+        q = FromUTF8ToStr(p, &len);
         if (q != (char *) NULL) {
             printf("q is %s\n", q);
             free(q);

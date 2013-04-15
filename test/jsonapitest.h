@@ -468,6 +468,56 @@ public:
         CPPUNIT_ASSERT(value == "\"\\n\"");  
         delete obj;
 
+        str = "\"\\u0024\"";
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
+        CPPUNIT_ASSERT(value == "\"\\u0024\"");  
+        char *ret = obj->GetAsUTF8();
+        CPPUNIT_ASSERT(ret);
+        value = ret;
+        CPPUNIT_ASSERT(value == "\"$\"");  
+        delete obj;
+
+        str = "\"\\u00A2\"";
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
+        CPPUNIT_ASSERT(value == "\"\\u00A2\"");  
+        delete obj;
+
+        str = "\"\\u20AC\"";
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
+        CPPUNIT_ASSERT(value == "\"\\u20AC\"");  
+        delete obj;
+
+        str = "\"\\u003Cp\\u003E\"";
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+        obj = static_cast<JSONString *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_String);
+        value = obj->Get();
+        CPPUNIT_ASSERT(value == "\"\\u003Cp\\u003E\"");  
+        value = obj->GetAsUTF8();
+        CPPUNIT_ASSERT(value == "\"<p>\"");  
+        delete obj;
+
         str = "\"\r\n\b\"";
         parser->SetInput(str);
         CPPUNIT_ASSERT(parser->Parse() == true);
