@@ -48,7 +48,7 @@ I am working on an arduino-based robot that communicates back to a Linux
 system. I wanted to use JSON to encode messages between the two. I looked
 at some existing C++ JSON parsers and decided I wanted to write my own. 
 
-How do I Build JSONAPI?
+How do I build JSONAPI?
 -----------------------
 
 - Install flex, bison, and cppunit on your system.
@@ -58,14 +58,14 @@ How do I Build JSONAPI?
 Currently, make install is not doing the right things with respect to
 distributing the headers needed to use JSONAPI.
 
-Where can I Find examples of JSONAPI
+Where can I find examples of JSONAPI
 ------------------------------------
 
 Test-driven development was used in the making of JSONAPI. The header file 
 test/jsonapitest.h has plenty of simple examples of JSON encode and decode.
 All of these tests should pass, so they can be relied on as examples.
 
-How Do I Decode JSON using JSONAPI?
+How do I decode JSON using JSONAPI?
 -----------------------------------
 
 Generally, to decode, you create an instance of JsonParse, give it a string
@@ -108,7 +108,7 @@ two integers:
             }
         }
  
-How Do I Encode JSON using JSONAPI?
+How do I encode JSON using JSONAPI?
 -----------------------------------
 
 Generally, to encode, you create a data structure that reflects the
@@ -135,7 +135,7 @@ integers:
         str = array->ToJSON(str);
         assert(str == "[17,18]");
 
-Does JSONAPI Support Unicode?
+Does JSONAPI support Unicode?
 -----------------------------
 
 Technically, JSONAPI supports UTF-8, which is the most common instance of
