@@ -481,6 +481,7 @@ public:
         CPPUNIT_ASSERT(ret);
         value = ret;
         CPPUNIT_ASSERT(value == "\"$\"");  
+        CPPUNIT_ASSERT(value == "\"\u0024\"");  
         delete obj;
 
         str = "\"\\u00A2\"";
@@ -492,6 +493,10 @@ public:
         CPPUNIT_ASSERT(type == JsonType_String);
         value = obj->Get();
         CPPUNIT_ASSERT(value == "\"\\u00A2\"");  
+        ret = obj->GetAsUTF8();
+        CPPUNIT_ASSERT(ret);
+        value = ret;
+        CPPUNIT_ASSERT(value == "\"\u00a2\"");  
         delete obj;
 
         str = "\"\\u20AC\"";
@@ -503,6 +508,10 @@ public:
         CPPUNIT_ASSERT(type == JsonType_String);
         value = obj->Get();
         CPPUNIT_ASSERT(value == "\"\\u20AC\"");  
+        ret = obj->GetAsUTF8();
+        CPPUNIT_ASSERT(ret);
+        value = ret;
+        CPPUNIT_ASSERT(value == "\"\u20ac\"");  
         delete obj;
 
         str = "\"\\u003Cp\\u003E\"";
@@ -515,7 +524,7 @@ public:
         value = obj->Get();
         CPPUNIT_ASSERT(value == "\"\\u003Cp\\u003E\"");  
         value = obj->GetAsUTF8();
-        CPPUNIT_ASSERT(value == "\"<p>\"");  
+        CPPUNIT_ASSERT(value == "\"\u003cp\u003e\"");  
         delete obj;
 
         str = "\"\r\n\b\"";

@@ -106,16 +106,16 @@ FromStrToUTF8(char *p, int *lenout)
         *q = 0xC0;
         *q |= (tmp & 0x7C0) >> 6;
         q++;
-        *q |= 0x80;
+        *q = 0x80;
         *q |= tmp & 0x003f;
     } else if (len == 3) {
         *q = 0xE0;
         *q |= (tmp & 0xf000) >> 12;
         q++;
-        *q |= 0x80;
+        *q = 0x80;
         *q |= (tmp & 0x0fc0) >> 6;
         q++;
-        *q |= 0x80;
+        *q = 0x80;
         *q |= tmp & 0x003f;
     } 
 out:
