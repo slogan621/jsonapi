@@ -1,7 +1,7 @@
 jsonapi
 =======
 
-C++ API for parsing and creating JSON. 
+A simple, fast C++ API for parsing and creating JSON. 
 
 What is the license of JSONAPI?
 -------------------------------
@@ -41,8 +41,8 @@ The test harness is based on cppunit, so that is a requirement as well.
 If you spin up an instance of Ubuntu 12.04 LTS as a VM, flex, bison, and
 cppunit packages as well as the compiler will match mine. 
 
-Why did you write JSONAPI
--------------------------
+Why did you write JSONAPI?
+--------------------------
 
 I am working on an arduino-based robot that communicates back to a Linux
 system. I wanted to use JSON to encode messages between the two. I looked
@@ -58,8 +58,8 @@ How do I build JSONAPI?
 Currently, make install is not doing the right things with respect to
 distributing the headers needed to use JSONAPI.
 
-Where can I find examples of JSONAPI
-------------------------------------
+Where can I find examples of JSONAPI?
+-------------------------------------
 
 Test-driven development was used in the making of JSONAPI. The header file 
 test/jsonapitest.h has plenty of simple examples of JSON encode and decode.
