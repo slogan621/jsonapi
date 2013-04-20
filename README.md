@@ -17,6 +17,14 @@ JSONAPI is a simple, fast C++ JSON parser and encoder that supports UTF-8.
 It consists of a shared lib (libjsonapi), a test program (jsonapitest), 
 and a header (jsonapi.h).
 
+It parses using a parser generated from a grammar via yacc/bison. It creates
+an in-memory representation of the JSON, this representation is custom and
+exposed through a custom API. 
+
+You can also generate JSON by instantiating objects and constructing an 
+in-memory repesentation, and then calling ToJSON(). The construction of
+the in-memory representation is simple and hopefully intuitive to use.
+
 What does JSONAPI depend on?
 ----------------------------
 
@@ -44,18 +52,18 @@ cppunit packages as well as the compiler will match mine.
 Why did you write JSONAPI?
 --------------------------
 
-I am working on an arduino-based robot that communicates back to a Linux
+I was working on an arduino-based robot that communicates back to a Linux
 system. I wanted to use JSON to encode messages between the two. I looked
 at some existing C++ JSON parsers and decided I wanted to write my own. 
 
 How do I build JSONAPI?
 -----------------------
 
-- Install flex, bison, and cppunit on your system.
+- Install flex, bison, and cppunit on your system, if not already there.
 - ./configure
 - make; sudo make install
 
-Currently, make install is not doing the right things with respect to
+Currently, make install is not doing the right thing with respect to
 distributing the headers needed to use JSONAPI.
 
 Where can I find examples of JSONAPI?
@@ -69,10 +77,10 @@ How do I decode JSON using JSONAPI?
 -----------------------------------
 
 Generally, to decode, you create an instance of JsonParse, give it a string
-containing JSON to parse, call the Parse() method, and then inspect the
+containing the JSON to parse, call the Parse() method, and then inspect the
 results. 
 
-Here is a example that illustrates parsing a JSON array that contains 
+Here is a example that illustrates parsing a JSON array whihc contains 
 two integers:
 
         std::string str("[17, 18]");
@@ -95,13 +103,33 @@ two integers:
             JSONValue *val = JSONAPI::GetValue(parser);
             JSONType type = val->GetType();
 
-            // based on the type of object returned, cast to the derived
-            // class, then use the methods provided by JSONArray to 
+            // based on the type of object returned, cast to a derived
+            // class, and then use the methods provided by JSONArray to 
             // further inspect the results.
 
             switch (type) {
                 case JsonType_Array:
+                    // convert the value to an array
+
                     JSONArray *array = static_cast<JSONArray *>(val);
+
+                    // get the first element of the array
+
+                    val = array->Get(0);
+
+                    type = val->GetType();
+
+                    if (type == JsonType_Number) {
+
+                        // convert the value object to a JSONNumber object
+                        // and then retrieve the actual value
+
+                        int num = static_cast<JSONNumber *>(val)->Get();
+
+                        // the following should print "number is 17"
+
+                        printf("number is %d\n", num);
+                    }
                     ...
                     break;
                 ...
@@ -112,8 +140,8 @@ How do I encode JSON using JSONAPI?
 -----------------------------------
 
 Generally, to encode, you create a data structure that reflects the
-content of your JSON, and then call a function to encode it. The 
-function returns a string that is JSON format.
+content of your JSON, and you then call a function to encode it. The 
+encoding function returns a string that is JSON format.
 
 Here is an example of how you might create a two element array of
 integers:
@@ -140,11 +168,11 @@ Does JSONAPI support Unicode?
 
 Technically, JSONAPI supports UTF-8, which is the most common instance of
 "Unicode". It can parse strings that contain UTF-8 as a literal in the
-form \\uabcd (this is 4 C characters '\\', 'u', 'a', 'b', 'c', 'd'), and 
-JSONAPI can also generate 1, 2, and 3 byte UTF-8 encodings (e.g., the UTF-8 
-character '\uabcd').
+form \\uabcd (this is 4 C characters '\\', 'u', 'a', 'b', 'c', 'd').
+JSONAPI can also generate JSON UTF-8 from 2 and 3 byte UTF-8 encodings
+in strings. 
 
-For example, it can parse a string containing the text "\\u0024" and convert 
+For example, you can parse a string containing the text "\\u0024" and convert 
 it to UTF-8 as follows:
 
         std::string str = "\"\\u0024\"";
@@ -175,3 +203,5 @@ it to UTF-8 as follows:
             assert(value == "\"$\"");
             assert(value == "\"\u0024\"");
 
+See the function ParseTest::testCreateUTF8() in jsonapitest.h for examples
+of creating JSON from strings that encode 2 and 3 byte UTF-8.

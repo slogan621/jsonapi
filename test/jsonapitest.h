@@ -86,6 +86,7 @@ public:
     CPPUNIT_TEST( testCreateThreeElementObject );
     CPPUNIT_TEST( testCreateTwoElementNestedObject );
     CPPUNIT_TEST( testCreateThreeElementNestedObject );
+    CPPUNIT_TEST( testCreateUTF8 );
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -1439,6 +1440,64 @@ public:
         delete object1;
     }
 
+    void testCreateUTF8()
+    {
+        JSONString *jstr;
+        std::string str;
+
+        jstr = new JSONString("\\u0024");
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\\u0024\"");
+        delete jstr;
+
+        jstr = new JSONString("\u0024");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\u0024\"");
+        delete jstr;
+
+        jstr = new JSONString("\\u00A2");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\\u00A2\"");
+        delete jstr;
+
+        jstr = new JSONString("\u00A2");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\\u00A2\"");
+        delete jstr;
+
+        jstr = new JSONString("\\u20AC");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\\u20AC\"");
+        delete jstr;
+
+        jstr = new JSONString("\u20AC");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\\u20AC\"");
+        delete jstr;
+
+        jstr = new JSONString("\\u003Cp\\u003E");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\\u003Cp\\u003E\"");
+        delete jstr;
+
+        jstr = new JSONString("\u003Cp\u003E");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"<p>\"");
+        delete jstr;
+
+        jstr = new JSONString("\u20ACp\u20AC");
+        str = "";
+        str = jstr->ToJSON(str);
+        CPPUNIT_ASSERT(str == "\"\\u20ACp\\u20AC\"");
+        delete jstr;
+    }
 private:
 };
 

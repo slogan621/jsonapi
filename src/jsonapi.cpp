@@ -148,7 +148,7 @@ JSONArray::ToJSON(std::string &str)
 JSONString::JSONString(std::string &str) 
 {
     m_type = JsonType_String;
-    m_value = str; 
+    m_value = str;
 }
 
 
@@ -193,6 +193,10 @@ JSONString::ProcessEscapes(std::string &in)
     while(i < len) {
         if (*q == '\\') {
             *p++ = '\\';
+            if (i != len - 1 && *(q + 1) == 'u') {
+                *p++ = 'u';
+                q++;
+            }
         } else if (*q == '\f') {
             *p++ = '\\';
             *p++ = 'f';
@@ -225,6 +229,7 @@ JSONString::ProcessEscapes(std::string &in)
 extern "C" {
 char *FromUTF8ToStr(char *u, int *len);
 char *FromStrToUTF8(char *p, int *lenout);
+int IsMultibyteUTF8(char *p, int *lenout);
 }
 
 /**
@@ -263,9 +268,9 @@ JSONString::SetAsUTF8(const char *str)
         u = FromUTF8ToStr(p, &len);
         if (u != (char *) NULL) {
             char *t;
-            len--;
             // allocate a new buffer
             t = (char *) malloc(curLen + len);
+            len--;
             // copy old buffer over
             if (buf) {
                 memcpy(t, buf, curLen);
@@ -300,8 +305,8 @@ out:
 
 /**
  * Get string as a UTF-8 byte stream. Any portions of the string
- * that are in the form of \uxxxx will be converted to UTF-8 bytes
- * in the returned result.
+ * that are in the form of \\uxxxx will be converted to UTF-8 
+ * bytes in the returned result.
  * 
  * @return UTF-8 byte stream, NULL terminated. NULL on failure.
  * 
@@ -326,7 +331,7 @@ JSONString::GetAsUTF8()
         goto out;
     }
 
-    q = ret = (char *) malloc(Get().length());
+    q = ret = (char *) malloc(Get().length() + 1);
     if (!ret) {
         goto out;
     }
@@ -358,6 +363,68 @@ out:
 
 
 /**
+ * Given a string, convert any multibyte UTF-8 sequences to 
+ * form \\uabcd. If the UTF-8 is 1 byte encoding, just leave
+ * it as is, because ascii is same as UTF-8. 
+ * 
+ * @return string with multibyte UTF-8 encoded as \\uabcd, NULL 
+           terminated. NULL on failure.
+ * 
+ */
+
+char *
+JSONString::ConvertUTF8Multibyte()
+{
+    char *ret = NULL;
+    char *p;
+    char *q;
+    char *u;
+    int len;
+    int skiplen;
+    std::string value;
+
+    value = Get();
+    p = const_cast<char *>(value.c_str());
+    if (!p) {
+        goto out;
+    }
+
+    /* any \uabcd will be at most 7 bytes in size, so we can allocate
+       the entire buffer now worse case size and know we have enough 
+       space. */
+
+    q = ret = (char *) malloc(Get().length() * 7);
+    if (!ret) {
+        goto out;
+    }
+
+    while (*p) {
+        if (IsMultibyteUTF8(p, &skiplen)) {
+            u = FromUTF8ToStr(p, &len);
+            if (!u) {
+                free(ret);
+                ret = NULL;
+                goto out;
+            } else {
+                // copy to the buffer
+                len -= 1;
+                memcpy(q, u, len);
+                q += len;
+                // skip the UTF-8 portion
+                p += skiplen;
+            }            
+        } else {
+            // nothing special, just copy
+            *q++ = *p++;
+        }
+    }
+    *q = '\0';
+out: 
+    return ret;
+}
+
+
+/**
  * Convert a JSON string object to it's string version. Concatenate the
  * result to the passed in string reference.
  *
@@ -369,7 +436,7 @@ out:
 std::string
 JSONString::ToJSON(std::string &str)
 {       
-    return str + "\"" + Get() + "\"";
+    return str + "\"" + ConvertUTF8Multibyte() + "\"";
 }
 
 

@@ -31,14 +31,39 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 
 /**
- * Convert a UTF-8 \uxxxx string to a UTF-8 byte stream.
+ * Check to see if we are dealing with multibyte UTF-8.
+ *
+ * @param[in] p pointer to a character 
+ * @param[out] lenout length of the UTF-8 character
+ *
+ * @return 1 if character is UTF-8 multibyte, 3 byte of less, else 0. 
+ */
+
+int
+IsMultibyteUTF8(char *p, int *lenout) 
+{
+    int ret = 1;
+
+    if ((*p & 0x80) == 0) {
+        *lenout = 1;
+        ret = 0;
+    } else if ((*p & 0xe0) == 0xc0) {
+        *lenout = 2;
+    } else if ((*p & 0xf0) == 0xe0) {
+        *lenout = 3;
+    } 
+    return ret;
+}
+
+/**
+ * Convert a UTF-8 \\uxxxx string to a UTF-8 byte stream.
  *
  * @param[in] p 4 byte string to convert
  * @param[out] lenout length of the created byte sequence
  *
  * @return UTF-8 byte string or NULL if failure.
  * 
- * @note routine expects "\u" to be removed by caller.
+ * @note routine expects "\\u" to be removed by caller.
  * @note caller must free memory returned by this function.
  */
 

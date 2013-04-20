@@ -159,6 +159,7 @@ public:
     char *GetAsUTF8();
     std::string ToJSON(std::string &str);
 private:
+    char *ConvertUTF8Multibyte();
     std::string ProcessEscapes(std::string &s);
     std::string m_value;
 };
