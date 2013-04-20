@@ -27,7 +27,7 @@ the code itself is not dependent on any given platform. JSONAPI was developed
 with GNU C++ compiler version 4.6.3, but it should be portable to earlier and 
 later versions, and to other compilers like Microsoft's Visual C++.
 
-The most compilated C++ construct I used in the code besides classes are 
+The most complicated C++ construct I used in the code besides classes are 
 std::list and std::string. I built my own custom DOM that should represent
 JSON object structures about as efficiently as one can in terms of speed,
 and implemented what I hope is a sane API on top of it.
