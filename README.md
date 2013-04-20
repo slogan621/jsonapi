@@ -1,4 +1,177 @@
 jsonapi
 =======
 
-C++ API for parsing and creating JSON
+C++ API for parsing and creating JSON. 
+
+What is the license of JSONAPI?
+-------------------------------
+
+JSONAPI is licensed under a BSD license. Generally, this means you can do with
+it what you please, as long as I get mentioned somewhere. Please see the 
+sources for details.
+
+What is JSONAPI?
+----------------
+
+JSONAPI is a simple, fast C++ JSON parser and encoder that supports UTF-8.
+It consists of a shared lib (libjsonapi), a test program (jsonapitest), 
+and a header (jsonapi.h).
+
+What does JSONAPI depend on?
+----------------------------
+
+JSONAPI itself depends on nothing at runtime except the C++ standard library. 
+
+While I chose to distribute the code with a build system based on autotools, 
+the code itself is not dependent on any given platform. JSONAPI was developed 
+with GNU C++ compiler version 4.6.3, but it should be portable to earlier and 
+later versions, and to other compilers like Microsoft's Visual C++.
+
+The most compilated C++ construct I used in the code besides classes are 
+std::list and std::string. I built my own custom DOM that should represent
+JSON object structures about as efficiently as one can in terms of speed,
+and implemented what I hope is a sane API on top of it.
+
+The lexer and parser require you to build the library on a system that has
+GNU bison and flex installed. I used versions bison 2.5, and flex 2.5.35. 
+I would expect later versions to work as well.
+
+The test harness is based on cppunit, so that is a requirement as well. 
+
+If you spin up an instance of Ubuntu 12.04 LTS as a VM, flex, bison, and
+cppunit packages as well as the compiler will match mine. 
+
+Why did you write JSONAPI
+-------------------------
+
+I am working on an arduino-based robot that communicates back to a Linux
+system. I wanted to use JSON to encode messages between the two. I looked
+at some existing C++ JSON parsers and decided I wanted to write my own. 
+
+How do I Build JSONAPI?
+-----------------------
+
+- Install flex, bison, and cppunit on your system.
+- ./configure
+- make; sudo make install
+
+Currently, make install is not doing the right things with respect to
+distributing the headers needed to use JSONAPI.
+
+Where can I Find examples of JSONAPI
+------------------------------------
+
+Test-driven development was used in the making of JSONAPI. The header file 
+test/jsonapitest.h has plenty of simple examples of JSON encode and decode.
+All of these tests should pass, so they can be relied on as examples.
+
+How Do I Decode JSON using JSONAPI?
+-----------------------------------
+
+Generally, to decode, you create an instance of JsonParse, give it a string
+containing JSON to parse, call the Parse() method, and then inspect the
+results. 
+
+Here is a example that illustrates parsing a JSON array that contains 
+two integers:
+
+        std::string str("[17, 18]");
+
+        // allocate the parser
+
+        JsonParse *parser = new JsonParse();
+
+        // set the input
+
+        parser->SetInput(str);
+
+        // parse the string. if there is a failure, false will be returned.
+
+        if (parser->Parse() == true) {
+
+            // get the value of the parse, and then determine the type of
+            // object parsed.
+
+            JSONValue *val = JSONAPI::GetValue(parser);
+            JSONType type = val->GetType();
+
+            // based on the type of object returned, cast to the derived
+            // class, then use the methods provided by JSONArray to 
+            // further inspect the results.
+
+            switch (type) {
+                case JsonType_Array:
+                    JSONArray *array = static_cast<JSONArray *>(val);
+                    ...
+                    break;
+                ...
+            }
+        }
+ 
+How Do I Encode JSON using JSONAPI?
+-----------------------------------
+
+Generally, to encode, you create a data structure that reflects the
+content of your JSON, and then call a function to encode it. The 
+function returns a string that is JSON format.
+
+Here is an example of how you might create a two element array of
+integers:
+
+        // instantiate an array object, and two number objects.
+
+        JSONArray *array = new JSONArray();
+        JSONNumber *num1 = new JSONNumber(17);
+        JSONNumber *num2 = new JSONNumber(18);
+
+        // append the numbers to the array
+
+        array->Append(num1);
+        array->Append(num2);
+
+        // encode the array as JSON
+
+        std::string str;
+        str = array->ToJSON(str);
+        assert(str == "[17,18]");
+
+Does JSONAPI Support Unicode?
+-----------------------------
+
+Technically, JSONAPI supports UTF-8, which is the most common instance of
+"Unicode". It can parse strings that contain UTF-8 as a literal in the
+form \\uabcd (this is 4 C characters '\\', 'u', 'a', 'b', 'c', 'd'), and 
+JSONAPI can also generate 1, 2, and 3 byte UTF-8 encodings (e.g., the UTF-8 
+character '\uabcd').
+
+For example, it can parse a string containing the text "\\u0024" and convert 
+it to UTF-8 as follows:
+
+        std::string str = "\"\\u0024\"";
+
+        // set the parser's input string
+
+        parser->SetInput(str);
+
+        // parse and look at the result.
+
+        if (parser->Parse() == true) {
+            JSONString *obj = 
+                static_cast<JSONString *>(JSONAPI::GetValue(parser));
+
+            // get the literal value of the string. This is not
+            // UTF-8, and will be the same value as passed to the
+            // parser. Note the escaped '\', i.e., "\\u0024"
+
+            std::string value = obj->Get();
+            assert(value == "\"\\u0024\"");
+
+            // Get the UTF-8 byte stream. This will be a null terminated
+            // C string that is UTF-8 encoded (as 1, 2, or 3 bytes).
+            // Note the missing escape, i.e., "\u0024". In this example
+            // the encoding is 1 byte in length.
+
+            char *ret = obj->GetAsUTF8();
+            assert(value == "\"$\"");
+            assert(value == "\"\u0024\"");
+
