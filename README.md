@@ -81,8 +81,6 @@ The following program takes a command line argument as JSON, parses it
 and displays the type of the root element parsed.
 
 <pre>
- #include <stdio.h>
- #include <stdlib.h>
  #include "jsonapi.h"
  #include "jsonparse.h"
 
@@ -141,7 +139,7 @@ and displays the type of the root element parsed.
     }
     delete parser;
  }
-<pre>
+</pre>
 
 Compile as in the following example:
 
