@@ -7,15 +7,15 @@ What is the license of JSONAPI?
 -------------------------------
 
 JSONAPI is licensed under a BSD license. Generally, this means you can do with
-it what you please, as long as I get mentioned somewhere. Please see the 
-sources for details.
+it what you please, as long as I get credit somewhere. Please see the sources 
+for details.
 
 What is JSONAPI?
 ----------------
 
 JSONAPI is a simple, fast C++ JSON parser and encoder that supports UTF-8.
 It consists of a shared lib (libjsonapi), a test program (jsonapitest), 
-and a header (jsonapi.h).
+and headers.
 
 It parses using a parser generated from a grammar via yacc/bison. It creates
 an in-memory representation of the JSON, this representation is custom and
@@ -33,7 +33,7 @@ JSONAPI itself depends on nothing at runtime except the C++ standard library.
 While I chose to distribute the code with a build system based on autotools, 
 the code itself is not dependent on any given platform. JSONAPI was developed 
 with GNU C++ compiler version 4.6.3, but it should be portable to earlier and 
-later versions, and to other compilers like Microsoft's Visual C++.
+later versions of gcc, and to other compilers like Microsoft's Visual C++.
 
 The most complicated C++ construct I used in the code besides classes are 
 std::list and std::string. I built my own custom DOM that should represent
@@ -63,8 +63,9 @@ How do I build JSONAPI?
 - ./configure
 - make; sudo make install
 
-Currently, make install is not doing the right thing with respect to
-distributing the headers needed to use JSONAPI.
+On Ubuntu systems, this results in the jsonapi library being installed in
+/usr/local/lib/jsonapi, the headers installed in /usr/local/include/jsonapi, 
+and the test application installed as /usr/local/bin/jsonapitest
 
 Where can I find examples of JSONAPI?
 -------------------------------------
