@@ -74,6 +74,90 @@ Test-driven development was used in the making of JSONAPI. The header file
 test/jsonapitest.h has plenty of simple examples of JSON encode and decode.
 All of these tests should pass, so they can be relied on as examples.
 
+What is a parser hello world program look like?
+-----------------------------------------------
+
+The following program takes a command line argument as JSON, parses it
+and displays the type of the root element parsed.
+
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include "jsonapi.h"
+ #include "jsonparse.h"
+
+ void
+ usage(char *name)
+ {
+    fprintf(stderr, "usage: %s <json>\n", name);
+    exit(0);
+ }
+
+ int
+ main(int argc, char *argv[])
+ {
+    if (argc != 2) {
+        usage(argv[0]);
+    }
+
+    std::string input(argv[1]);
+    JsonParse *parser = new JsonParse();
+
+    parser->SetInput(input);
+    if (parser->Parse() == true) {
+        JSONValue *val = JSONAPI::GetValue(parser);
+
+        switch(val->GetType()) {
+        case JsonType_Object:
+            printf("type is JsonType_Object\n");
+            break;
+        case JsonType_Array:
+            printf("type is JsonType_Array\n");
+            break;
+        case JsonType_String:
+            printf("type is JsonType_String\n");
+            break;
+        case JsonType_Number:
+            printf("type is JsonType_Number\n");
+            break;
+        case JsonType_Double:
+            printf("type is JsonType_Double\n");
+            break;
+        case JsonType_Bool:
+            printf("type is JsonType_Bool\n");
+            break;
+        case JsonType_Tuple:
+            printf("type is JsonType_Tuple\n");
+            break;
+        case JsonType_Null:
+            printf("type is JsonType_Null\n");
+            break;
+        default:
+            printf("type is unknown\n");
+            break;
+        }
+
+        delete val;
+    }
+    delete parser;
+ }
+
+Compile as in the following example:
+
+ $ g++ -o testit testit.cpp -I/usr/local/include/jsonapi \
+        -L/usr/local/lib/jsonapi -ljsonapi
+
+Run it as in the following example:
+
+ $ ./testit "\"hello world\""
+ type is JsonType_String
+ $ ./testit 1.3
+ type is JsonType_Double
+ $ ./testit "{\"foo\": 17}"
+ type is JsonType_Object
+ $ ./testit "[1, \"fred\", 2, 19.4]" 
+ type is JsonType_Array
+
+
 How do I decode JSON using JSONAPI?
 -----------------------------------
 
