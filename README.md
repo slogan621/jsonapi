@@ -74,12 +74,13 @@ Test-driven development was used in the making of JSONAPI. The header file
 test/jsonapitest.h has plenty of simple examples of JSON encode and decode.
 All of these tests should pass, so they can be relied on as examples.
 
-What is a parser hello world program look like?
------------------------------------------------
+What does a parser hello world program look like?
+-------------------------------------------------
 
 The following program takes a command line argument as JSON, parses it
 and displays the type of the root element parsed.
 
+<pre>
  #include <stdio.h>
  #include <stdlib.h>
  #include "jsonapi.h"
@@ -140,14 +141,18 @@ and displays the type of the root element parsed.
     }
     delete parser;
  }
+<pre>
 
 Compile as in the following example:
 
+<pre>
  $ g++ -o testit testit.cpp -I/usr/local/include/jsonapi \
         -L/usr/local/lib/jsonapi -ljsonapi
+</pre>
 
 Run it as in the following example:
 
+<pre>
  $ ./testit "\"hello world\""
  type is JsonType_String
  $ ./testit 1.3
@@ -156,7 +161,7 @@ Run it as in the following example:
  type is JsonType_Object
  $ ./testit "[1, \"fred\", 2, 19.4]" 
  type is JsonType_Array
-
+</pre>
 
 How do I decode JSON using JSONAPI?
 -----------------------------------
