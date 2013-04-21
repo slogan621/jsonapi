@@ -82,7 +82,6 @@ and displays the type of the root element parsed.
 
 <pre>
  #include "jsonapi.h"
- #include "jsonparse.h"
 
  void
  usage(char *name)
