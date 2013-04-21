@@ -150,11 +150,13 @@ out:
 
 /**
  *
- * Convert a 3 byte (or less) UTF-8 byte stream to a hex string in format
- * "\uabcd".
+ * Convert a 3 byte (or less) UTF-8 byte stream to a string in the format
+ * "\\uabcd". Note this is a 7 byte string consisting of the letters '\\',
+ * 'u', 'a', 'b', 'c', 'd', '\0'. This makes the result suitable for use
+ * as a JSON UTF-8 encoded string.
  *
  * @param[in] u utf-8 byte stream. Stream does not need to be NULL terminated.
- * @param[out] len size of resulting buffer. 
+ * @param[out] len size of resulting buffer (always 7). 
  *
  * @return Ascii hex string representing the unicode byte stream
  */
