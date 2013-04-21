@@ -167,7 +167,7 @@ Generally, to decode, you create an instance of JsonParse, give it a string
 containing the JSON to parse, call the Parse() method, and then inspect the
 results. 
 
-Here is a example that illustrates parsing a JSON array whihc contains 
+Here is a example that illustrates parsing a JSON array which contains 
 two integers:
 
 <pre>
