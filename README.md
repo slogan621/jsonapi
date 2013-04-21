@@ -170,6 +170,7 @@ results.
 Here is a example that illustrates parsing a JSON array whihc contains 
 two integers:
 
+<pre>
         std::string str("[17, 18]");
 
         // allocate the parser
@@ -222,6 +223,7 @@ two integers:
                 ...
             }
         }
+</pre>
  
 How do I encode JSON using JSONAPI?
 -----------------------------------
@@ -233,6 +235,7 @@ encoding function returns a string that is JSON format.
 Here is an example of how you might create a two element array of
 integers:
 
+<pre>
         // instantiate an array object, and two number objects.
 
         JSONArray *array = new JSONArray();
@@ -249,6 +252,7 @@ integers:
         std::string str;
         str = array->ToJSON(str);
         assert(str == "[17,18]");
+</pre>
 
 Does JSONAPI support Unicode?
 -----------------------------
@@ -262,6 +266,7 @@ in strings.
 For example, you can parse a string containing the text "\\u0024" and convert 
 it to UTF-8 as follows:
 
+<pre>
         std::string str = "\"\\u0024\"";
 
         // set the parser's input string
@@ -289,6 +294,7 @@ it to UTF-8 as follows:
             char *ret = obj->GetAsUTF8();
             assert(value == "\"$\"");
             assert(value == "\"\u0024\"");
+</pre>
 
 See the function ParseTest::testCreateUTF8() in jsonapitest.h for examples
 of creating JSON from strings that encode 2 and 3 byte UTF-8.
