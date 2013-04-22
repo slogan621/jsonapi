@@ -74,10 +74,11 @@ Test-driven development was used in the making of JSONAPI. The header file
 test/jsonapitest.h has plenty of simple examples of JSON encode and decode.
 All of these tests should pass, so they can be relied on as examples.
 
-How fast is JSONAPI
--------------------
+How fast is JSONAPI?
+--------------------
 
-It parses *fast*. 
+It parses JSON *fast*. This is most likely due to my used of Yacc and lex.
+Could I write a faster parser? Probably not.
 
 It encodes a bit more slowly, but probably due to string copies and I'm 
 working on it :-). Still, even with encode, it is not in last place among 
