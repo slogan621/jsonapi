@@ -170,8 +170,6 @@ JSONString::JSONString(const char *str)
  *
  * For example, "Hello\nWorld" --> "Hello\\nWorld"
  *
- * @note No support for unicode (\u) in this version.
- *
  * @return the JSON string with escapes processed.
  */
 
@@ -193,13 +191,7 @@ JSONString::ProcessEscapes(std::string &in)
     char *q = buf2;
     int i = 0;
     while(i < len) {
-        if (*q == '\\') {
-            *p++ = '\\';
-            if (i != len - 1 && *(q + 1) == 'u') {
-                *p++ = 'u';
-                q++;
-            }
-        } else if (*q == '\f') {
+        if (*q == '\f') {
             *p++ = '\\';
             *p++ = 'f';
         } else if (*q == '\n') {
