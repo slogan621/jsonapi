@@ -28,24 +28,26 @@ the in-memory representation is simple and hopefully intuitive to use.
 How fast is JSONAPI?
 --------------------
 
-It parses JSON *fast*. This is most likely due to my use of Yacc and lex.
-Could I write a faster parser? Probably not.
+It parses JSON pretty *fast*. This is most likely due to my use of yacc and lex.
+Could I write a faster parser? Perhaps. 
 
 It encodes a bit more slowly, but probably due to string copies and I'm 
-working on it :-). Still, even with encode, it is not in last place among 
-those benchmarked at https://github.com/lijoantony/JsonBenchmarkCpp
+working on it :-). Still, even encode is not in last place among those 
+benchmarked at https://github.com/lijoantony/JsonBenchmarkCpp
 
 In an Ubuntu virtual machine running on a MacBook Pro:
 
 <pre>
 $ ./JsonBenchmarkCpp 
 #library                 parsing                  writing                  
-jsonapi                  262                      666                      
+jsonapi                  262                      666                        
 cajun                    1738                     280                      
 json_spirit              10784                    998                      
 libjson                  331                      285                      
 json_parser              90                       
 </pre>
+
+JsonBenchmarkCpp does not benchmark json_parser encoding for whatever reason.
 
 What does JSONAPI depend on?
 ----------------------------
