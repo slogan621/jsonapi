@@ -25,6 +25,28 @@ You can also generate JSON by instantiating objects and constructing an
 in-memory repesentation, and then calling ToJSON(). The construction of
 the in-memory representation is simple and hopefully intuitive to use.
 
+How fast is JSONAPI?
+--------------------
+
+It parses JSON *fast*. This is most likely due to my use of Yacc and lex.
+Could I write a faster parser? Probably not.
+
+It encodes a bit more slowly, but probably due to string copies and I'm 
+working on it :-). Still, even with encode, it is not in last place among 
+those benchmarked at https://github.com/lijoantony/JsonBenchmarkCpp
+
+In an Ubuntu virtual machine running on a MacBook Pro:
+
+<pre>
+$ ./JsonBenchmarkCpp 
+#library                 parsing                  writing                  
+jsonapi                  262                      666                      
+cajun                    1738                     280                      
+json_spirit              10784                    998                      
+libjson                  331                      285                      
+json_parser              90                       
+</pre>
+
 What does JSONAPI depend on?
 ----------------------------
 
@@ -73,28 +95,6 @@ Where can I find examples of JSONAPI?
 Test-driven development was used in the making of JSONAPI. The header file 
 test/jsonapitest.h has plenty of simple examples of JSON encode and decode.
 All of these tests should pass, so they can be relied on as examples.
-
-How fast is JSONAPI?
---------------------
-
-It parses JSON *fast*. This is most likely due to my used of Yacc and lex.
-Could I write a faster parser? Probably not.
-
-It encodes a bit more slowly, but probably due to string copies and I'm 
-working on it :-). Still, even with encode, it is not in last place among 
-those benchmarked at https://github.com/lijoantony/JsonBenchmarkCpp
-
-In an Ubuntu virtual machine running on a MacBook Pro:
-
-<pre>
-$ ./JsonBenchmarkCpp 
-#library                 parsing                  writing                  
-jsonapi                  262                      666                      
-cajun                    1738                     280                      
-json_spirit              10784                    998                      
-libjson                  331                      285                      
-json_parser              90                       
-</pre>
 
 What does a parser hello world program look like?
 -------------------------------------------------
