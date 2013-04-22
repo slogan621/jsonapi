@@ -91,19 +91,20 @@ JSONObject::JSONObject()
  * @return the JSON string object as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONObject::ToJSON(std::string &str)
 {       
     std::string ret;
     ret += "{";
     for (int i = 0; i < GetSize(); i++) {
-        ret = Get(i)->ToJSON(ret);
+        Get(i)->ToJSON(ret);
         if (GetSize() > 1 && i != GetSize() - 1) {
             ret += ",";
         }
     }
     ret += "}";
-    return str + ret;
+    str += ret;
+    return str;
 }
 
 
@@ -126,7 +127,7 @@ JSONArray::JSONArray()
  * @return the JSON array as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONArray::ToJSON(std::string &str)
 {       
     std::string ret = "[";
@@ -137,7 +138,8 @@ JSONArray::ToJSON(std::string &str)
         }
     }
     ret += "]";
-    return str + ret;
+    str += ret;
+    return str;
 }
 
 
@@ -433,10 +435,13 @@ out:
  * @return the JSON string object as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONString::ToJSON(std::string &str)
 {       
-    return str + "\"" + ConvertUTF8Multibyte() + "\"";
+    std::string ret;
+
+    str += std::string("\"") + ConvertUTF8Multibyte() + std::string("\"");
+    return str;
 }
 
 
@@ -470,14 +475,15 @@ JSONNumber::JSONNumber(long number)
  * @return the JSON string object as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONNumber::ToJSON(std::string &str)
 {       
     char buf[128];
 
     snprintf(buf, sizeof buf - 1, "%ld", Get());
-    std::string ret = buf; 
-    return str + ret;
+    std::string ret(buf); 
+    str += ret;
+    return str;
 }
 
 
@@ -511,14 +517,15 @@ JSONDouble::JSONDouble(double val)
  * @return the JSON string object as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONDouble::ToJSON(std::string &str)
 {       
     char buf[128];
 
     snprintf(buf, sizeof buf - 1, "%f", Get());
-    std::string ret = buf; 
-    return str + ret;
+    std::string ret(buf); 
+    str += ret;
+    return str;
 }
 
 
@@ -552,13 +559,14 @@ JSONBoolean::JSONBoolean(bool val)
  * @return the JSON string object as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONBoolean::ToJSON(std::string &str)
 {       
     std::string ret;
 
     ret = (Get() == true ? "true" : "false");
-    return str + ret;
+    str += ret;
+    return str;
 }
 
 
@@ -581,14 +589,15 @@ JSONTuple::JSONTuple()
  * @return the JSON string object as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONTuple::ToJSON(std::string &str)
 {       
     std::string ret = "\"";
     ret += GetKey();
     ret += "\": ";
-    ret = GetValue()->ToJSON(ret);
-    return str + ret;
+    GetValue()->ToJSON(ret);
+    str += ret;
+    return str;
 }
 
 
@@ -611,11 +620,11 @@ JSONNull::JSONNull()
  * @return the JSON string object as a string, concatenated to str.
  */
 
-std::string
+std::string &
 JSONNull::ToJSON(std::string &str)
 {       
-    std::string ret = "null";
-    return str + ret;
+    str += "null";
+    return str;
 }
 
 
@@ -782,11 +791,11 @@ JSONValue::Append(JSONValue *val)
  * @return str + "Not implemented"
  */
 
-std::string
+std::string &
 JSONValue::ToJSON(std::string &str)
 {       
-    std::string ret = "Not Implemented";
-    return str + ret;
+    str += "Not Implemented";
+    return str;
 }
 
 

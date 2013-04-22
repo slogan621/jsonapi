@@ -75,7 +75,7 @@ public:
     void Prepend(JSONValue *val);
     bool Delete(int offset);
     bool Insert(int offset, JSONValue *val);
-    virtual std::string ToJSON(std::string &str);
+    virtual std::string &ToJSON(std::string &str);
 protected:
     JsonType m_type;
 private:
@@ -97,7 +97,7 @@ public:
     std::string GetKey() {return m_key;}
     void SetValue(JSONValue *value) {m_value = value;}
     JSONValue *GetValue() {return m_value;}
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 private:
     std::string m_key;
     JSONValue *m_value;
@@ -111,7 +111,7 @@ class JSONObject : public JSONValue
 {
 public:
     JSONObject();
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 };
 
 
@@ -123,7 +123,7 @@ class JSONArray : public JSONValue
 {
 public:
     JSONArray();
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 };
 
 /**
@@ -137,7 +137,7 @@ public:
     JSONNumber(long val);
     void Set(long val) {m_value = val;}
     long Get() {return m_value;}
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 private:
     long m_value;
 };
@@ -157,7 +157,7 @@ public:
     std::string Get() {return ProcessEscapes(m_value);}
     bool SetAsUTF8(const char *str);
     char *GetAsUTF8();
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 private:
     char *ConvertUTF8Multibyte();
     std::string ProcessEscapes(std::string &s);
@@ -176,7 +176,7 @@ public:
     JSONDouble(double val);
     void Set(double val) {m_value = val;}
     double Get() {return m_value;}
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 private:
     double m_value;
 };
@@ -192,7 +192,7 @@ public:
     JSONBoolean(bool val);
     void Set(bool val) {m_value = val;}
     bool Get() {return m_value;}
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 private:
     bool m_value;
 };
@@ -206,7 +206,7 @@ class JSONNull : public JSONValue
 public:
     JSONNull();
     long Get() {return 0L;}
-    std::string ToJSON(std::string &str);
+    std::string &ToJSON(std::string &str);
 private:
 };
 
