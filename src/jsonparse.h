@@ -47,6 +47,7 @@ public:
     ~JsonParse();
     void PushRoot();
     bool AddTuple(void *name, void *val);
+    bool AddArray(JsonValue *obj);
     bool AddObject(JsonValue *obj);
     bool AddValue(JsonValue *obj);
     std::string ToJson();

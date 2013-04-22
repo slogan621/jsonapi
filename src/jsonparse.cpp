@@ -243,6 +243,27 @@ JsonParse::AddObject(JsonValue *obj)
 
 
 /**
+ * Push JSON array onto context stack.
+ *
+ * @param[in] obj the object to push.
+ *
+ * @return true on success, false on failure.
+ */
+
+bool 
+JsonParse::AddArray(JsonValue *obj)
+{
+    obj->SetType(JsonType_Array); 
+    if (m_ctx.Current()->GetType() == JsonType_Root ||
+        m_ctx.Current()->GetType() == JsonType_Array) {
+        m_ctx.Current()->AddChild(obj); 
+    }
+    m_ctx.Push(obj);
+    return true;
+}
+
+
+/**
  * Push JSON value onto context stack.
  *
  * @param[in] obj the value to push.

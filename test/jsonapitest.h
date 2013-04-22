@@ -69,6 +69,7 @@ public:
     CPPUNIT_TEST( testThreeElementObject );
     CPPUNIT_TEST( testTwoElementNestedObject );
     CPPUNIT_TEST( testThreeElementNestedObject );
+    CPPUNIT_TEST( testObjectTupleArray );
     CPPUNIT_TEST( testCreateNumber );
     CPPUNIT_TEST( testCreateNull );
     CPPUNIT_TEST( testCreateDouble );
@@ -1044,6 +1045,58 @@ public:
         CPPUNIT_ASSERT(static_cast<JSONNumber *>(value2)->Get() == 17);
 
         delete obj;
+        delete parser;
+    }
+
+    void testObjectTupleArray()
+    {
+        std::string str = " \
+            {\"web-app\": \
+                { \
+                   \"servlet\": [   \
+                        { \
+                            \"servlet-name\": \"cofaxCDS1\" \
+                        }, \
+                        { \
+                            \"servlet-name\": \"cofaxCDS2\" \
+                        } \
+                    ] \
+                } \
+            }";
+
+        JsonParse *parser = new JsonParse();
+        
+        parser->SetInput(str);
+        CPPUNIT_ASSERT(parser->Parse() == true);
+#if 0
+        JSONObject *obj = static_cast<JSONObject *>(JSONAPI::GetValue(parser));
+        CPPUNIT_ASSERT(obj);
+        JsonType type = obj->GetType();
+        CPPUNIT_ASSERT(type == JsonType_Object);
+        JSONTuple *value;
+        value = static_cast<JSONTuple *>(obj->Get(0));
+        type = value->GetType();
+        CPPUNIT_ASSERT(type == JsonType_Tuple);
+        std::string key = value->GetKey();
+        CPPUNIT_ASSERT(key == "\"Field1\"");
+        JSONObject *obj2 = static_cast<JSONObject *>(value->GetValue());
+        type = obj2->GetType();
+        CPPUNIT_ASSERT(type == JsonType_Object);
+        value = static_cast<JSONTuple *>(obj2->Get(0));
+        key = value->GetKey();
+        CPPUNIT_ASSERT(key == "\"Field2\"");
+        JSONObject *obj3 = static_cast<JSONObject *>(value->GetValue());
+        type = obj3->GetType();
+        CPPUNIT_ASSERT(type == JsonType_Object);
+        value = static_cast<JSONTuple *>(obj3->Get(0));
+        key = value->GetKey();
+        CPPUNIT_ASSERT(key == "\"Field3\"");
+        JSONValue *value2;
+        value2 = value->GetValue();
+        CPPUNIT_ASSERT(static_cast<JSONNumber *>(value2)->Get() == 17);
+
+        delete obj;
+#endif
         delete parser;
     }
 

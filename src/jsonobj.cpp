@@ -61,8 +61,8 @@ JsonNode::DeleteChildren()
 
     while (!m_children.empty()) {
         p = m_children.front();
-        delete p;
         m_children.pop_front();
+        delete p;
     }
 }
 

@@ -97,8 +97,8 @@ array
     : arraystart valuelist arrayend
 
 arraystart
-    : tok_leftbracket {Context *ctx = static_cast<JsonParse *>(parser)->GetContext(); JsonValue *obj = static_cast<JsonValue *>(yylval.obj); obj->SetType(JsonType_Array); ctx->Current()->AddChild(obj); ctx->Push(obj);}
-
+    : tok_leftbracket {JsonValue *obj = static_cast<JsonValue *>(yylval.obj); static_cast<JsonParse *>(parser)->AddArray(obj);}
+ 
 arrayend
     : tok_rightbracket {Context *ctx = static_cast<JsonParse *>(parser)->GetContext(); ctx->Pop();}
 
