@@ -6,9 +6,9 @@ A simple, fast C++ API for parsing and creating JSON.
 What is the license of JSONAPI?
 -------------------------------
 
-JSONAPI is licensed under a BSD license. Generally, this means you can do with
-it what you please, as long as I get credit somewhere. Please see the sources 
-for details.
+JSONAPI is dual licensed under a BSD 3 license and GPLv2 license. Generally, 
+this means you can do with it what you please. Choose the license which works
+best for you.
 
 What is JSONAPI?
 ----------------
